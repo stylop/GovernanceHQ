@@ -54,7 +54,12 @@ def about_page(request):
 def past_events(request):
     today = timezone.now().date()
     events = Event.objects.filter(date__lt=today).order_by("-date")
-    return render(request, "core/events.html", {"events": events})
+    paginator = Paginator(events, 6)  # show 6 events per page
+
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    return render(request, "core/events.html", {"page_obj": page_obj,
+        "events": page_obj,})
 
 
 def category_posts(request, slug):
@@ -203,8 +208,17 @@ def photo_category(request, slug):
 
 def videos_list(request):
     categories = VideoCategory.objects.all()
-    videos = Video.objects.all()
-    return render(request, "core/videos_list.html", {"categories": categories, "videos": videos})
+    videos = Video.objects.all().order_by("-id")  # optional: newest first
+
+    paginator = Paginator(videos, 6)  # show 6 per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "core/videos_list.html", {
+        "categories": categories,
+        "videos": page_obj,   # ✅ videos loop
+        "page_obj": page_obj, # ✅ pagination controls
+    })
 
 def video_category(request, slug):
     category = get_object_or_404(VideoCategory, slug=slug)
@@ -253,10 +267,16 @@ def unsubscribe_newsletter(request, token):
     return render(request, "newsletter/confirm_unsubscribe.html", {"subscriber": subscriber})
 
 def portfolio_list(request):
-    portfolios = Portfolio.objects.all()
+    portfolios = Portfolio.objects.all().order_by("-id")   # newest first
     categories = PortfolioCategory.objects.all()
+
+    paginator = Paginator(portfolios, 9)  # show 9 portfolios per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     return render(request, "core/portfolio.html", {
-        "portfolios": portfolios,
+        "page_obj": page_obj,
+        "portfolios": page_obj,   # so template loop still works
         "categories": categories,
     })
 

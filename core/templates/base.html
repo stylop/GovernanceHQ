@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  {% block title %}  - GovernanceHQ  {% endblock %}
+    <title>Home -  GovernanceHQ</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
 
@@ -97,8 +97,8 @@
         </li>
         <li>
           <a href="{% url 'past_events' %}"
-             class="{% if request.resolver_match.url_name == 'past_events' %}active{% endif %}"><span></span>
-            <i class="bi bi-calendar-event"></i> Events
+             class="{% if request.resolver_match.url_name == 'past_events' %}active{% endif %}">
+            Events
           </a>
         </li>
 

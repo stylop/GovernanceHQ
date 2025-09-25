@@ -3,7 +3,7 @@
 
 {% block content %}
 <section id="videos" class="work-process section">
-
+<br>
   <div class="page-title" data-aos="fade">
     <div class="container">
       <nav class="breadcrumbs">
@@ -41,7 +41,7 @@
       <!-- Main Content: Videos -->
       <div class="col-lg-9">
         <div class="row gy-5">
-          {% for video in videos %}
+          {% for video in page_obj %}
             <div class="col-lg-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:200 }}">
               <div class="steps-item">
                 <div class="steps-image position-relative">
@@ -64,8 +64,41 @@
             <p class="text-center">No videos available.</p>
           {% endfor %}
         </div>
-      </div>
 
+      </div>
+        <!-- Pagination -->
+        <section id="pagination-2" class="pagination-2 section">
+          <div class="container">
+            <div class="d-flex justify-content-center">
+              <ul>
+                {% if page_obj.has_previous %}
+                  <li>
+                    <a href="?page={{ page_obj.previous_page_number }}">
+                      <i class="bi bi-chevron-left"></i>
+                    </a>
+                  </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                  {% if page_obj.number == num %}
+                    <li><a href="?page={{ num }}" class="active">{{ num }}</a></li>
+                  {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li><a href="?page={{ num }}">{{ num }}</a></li>
+                  {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                  <li>
+                    <a href="?page={{ page_obj.next_page_number }}">
+                      <i class="bi bi-chevron-right"></i>
+                    </a>
+                  </li>
+                {% endif %}
+              </ul>
+            </div>
+          </div>
+        </section>
+        <!-- /Pagination -->
     </div>
   </div>
 </section>
