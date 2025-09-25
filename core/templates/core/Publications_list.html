@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Publications - GovernanceHQ {% endblock %}
+
+{% block content %}
+<main class="main">
+
+  <!-- Page Title -->
+  <br><br>
+  <div class="page-title" data-aos="fade">
+    <div class="container">
+      <nav class="breadcrumbs">
+        <ol>
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li class="current">Publications</li>
+        </ol>
+      </nav>
+      <h1>Publications</h1>
+    </div>
+  </div>
+  <!-- End Page Title -->
+
+  <section id="publications" class="publications section">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="row">
+
+        <!-- Publications List -->
+        <div class="col-lg-8">
+          <div class="row gy-4">
+            {% for pub in page_obj %}
+              <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm border-0">
+                  {% if pub.image %}
+                    <img src="{{ pub.image.url }}" class="card-img-top" alt="{{ pub.title }}">
+                  {% else %}
+                    <img src="{% static 'assets/img/default-publication.jpg' %}" class="card-img-top" alt="No image">
+                  {% endif %}
+
+                  <div class="card-body">
+                    <h5 class="card-title">
+                      <a href="{% url 'publication_detail' pub.slug %}">{{ pub.title }}</a>
+                    </h5>
+
+                    {% if pub.category %}
+                      <p class="text-muted small mb-2">
+                        <i class="bi bi-folder"></i> {{ pub.category.name }}
+                      </p>
+                    {% endif %}
+
+                    <p class="card-text">{{ pub.content|truncatewords:20 }}</p>
+                  </div>
+
+                  <div class="card-footer bg-white border-0">
+                    {% if pub.pdf_file %}
+                      <a href="{{ pub.pdf_file.url }}" target="_blank" class="btn btn-sm btn-primary">
+                        <i class="bi bi-file-earmark-pdf"></i> Download PDF
+                      </a>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            {% empty %}
+              <p>No publications found.</p>
+            {% endfor %}
+          </div>
+
+          <!-- Pagination -->
+          <div class="d-flex justify-content-center mt-4">
+            <ul class="pagination">
+              {% if page_obj.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                    <i class="bi bi-chevron-left"></i>
+                  </a>
+                </li>
+              {% endif %}
+
+              {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                  <li class="page-item active">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                  </li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+
+              {% if page_obj.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                    <i class="bi bi-chevron-right"></i>
+                  </a>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
+          <!-- End Pagination -->
+
+        </div>
+        <!-- End Publications List -->
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+          {% include "core/sidebar.html" %}
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock content %}

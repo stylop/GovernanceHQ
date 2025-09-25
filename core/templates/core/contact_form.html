@@ -1,0 +1,97 @@
+{% load static %}
+
+<form id="contactForm" action="{% url 'contact' %}" method="post" class="php-email-form">
+  {% csrf_token %}
+  <div class="row gy-4">
+
+    <div class="col-md-6">
+      {{ form.name.label_tag }}
+      {{ form.name }}
+      {% for error in form.name.errors %}
+        <div class="text-danger small">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="col-md-6">
+      {{ form.email.label_tag }}
+      {{ form.email }}
+      {% for error in form.email.errors %}
+        <div class="text-danger small">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="col-md-12">
+      {{ form.subject.label_tag }}
+      {{ form.subject }}
+      {% for error in form.subject.errors %}
+        <div class="text-danger small">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="col-md-12">
+      {{ form.message.label_tag }}
+      {{ form.message }}
+      {% for error in form.message.errors %}
+        <div class="text-danger small">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="col-md-12 text-center">
+      <div id="form-messages" class="mb-3"></div>
+      <button type="submit" class="btn btn-primary">Send Message</button>
+    </div>
+  </div>
+</form>
+
+
+<!-- AJAX Script -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const form = document.getElementById("contactForm");
+  const formMessages = document.getElementById("form-messages");
+
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    // Clear old error messages
+    form.querySelectorAll(".text-danger").forEach(el => el.remove());
+    formMessages.innerHTML = "";
+
+    const formData = new FormData(form);
+
+    fetch(form.action, {
+      method: "POST",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+        "X-CSRFToken": form.querySelector("[name=csrfmiddlewaretoken]").value,
+      },
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === "success") {
+        formMessages.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+        form.reset();
+      } else if (data.status === "error" && data.errors) {
+        // Show field-specific errors
+        for (const [field, messages] of Object.entries(data.errors)) {
+          const input = form.querySelector(`[name=${field}]`);
+          if (input) {
+            const errorDiv = document.createElement("div");
+            errorDiv.classList.add("text-danger", "small", "mt-1");
+            errorDiv.innerText = messages.join(", ");
+            input.insertAdjacentElement("afterend", errorDiv);
+          }
+        }
+        formMessages.innerHTML = `<div class="alert alert-danger">Please correct the errors below.</div>`;
+      }
+    })
+    .catch(error => {
+      formMessages.innerHTML = `<div class="alert alert-danger">Something went wrong. Please try again later.</div>`;
+    });
+  });
+});
+</script>
+
+
+

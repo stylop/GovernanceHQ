@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} About Us - GovernanceHQ {% endblock %}
+{% block content %}
+
+<!-- ======= Page Header ======= -->
+<section id="about-page" class="about section py-5">
+  <div class="page-title" data-aos="fade">
+    <div class="container">
+      <nav class="breadcrumbs">
+        <ol>
+          <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+          <li class="breadcrumb-item active">About Us</li>
+        </ol>
+      </nav>
+      <h1 class="fw-bold">About Us</h1>
+    </div>
+  </div>
+
+  <!-- About Content -->
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="section-title text-center mb-5" data-aos="fade-up">
+          <h2 class="fw-semibold">{{ about.title }}</h2>
+        </div>
+        <div class="content" data-aos="fade-up" data-aos-delay="100">
+          <p class="lead">{{ about.description|safe }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End About -->
+
+<!-- ======= Why Us Section ======= -->
+<section id="why-us" class="section why-us light-background py-5">
+  <div class="container">
+    <div class="row gy-5 align-items-center">
+
+      <!-- Left: Text & FAQ -->
+      <div class="col-lg-7 order-2 order-lg-1">
+        <div class="content mb-4" data-aos="fade-up" data-aos-delay="100">
+          <h3 class="fw-bold"><strong>Why Choose Us?</strong></h3>
+          <p class="text-muted">We strive to deliver value and excellence through our services. Here’s why organizations trust us:</p>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq-container" data-aos="fade-up" data-aos-delay="200">
+          {% for faq in about.faqs.all %}
+            <div class="faq-item {% if forloop.first %}faq-active{% endif %}">
+              <h3><span>{{ forloop.counter }}</span> {{ faq.question }}</h3>
+              <div class="faq-content">
+                <p>{{ faq.answer }}</p>
+              </div>
+              <i class="faq-toggle bi bi-chevron-right"></i>
+            </div>
+          {% empty %}
+            <p>No FAQs available.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Right: Image -->
+      <div class="col-lg-5 order-1 order-lg-2 text-center">
+        {% if about.image and about.image.image %}
+          <img src="{{ about.image.image.url }}"
+               class="img-fluid rounded shadow-sm"
+               alt="Why Us"
+               data-aos="zoom-in" data-aos-delay="100">
+        {% else %}
+          <img src="{% static 'assets/img/why-us.png' %}"
+               class="img-fluid rounded shadow-sm"
+               alt="Why Us">
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Why Us -->
+
+{% endblock %}
+

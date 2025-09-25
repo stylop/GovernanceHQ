@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*$py.class
+
+# Virtual environment
+env/
+venv/
+.venv/
+ENV/
+
+# Django stuff
+*.log
+*.pot
+*.pyc
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+
+# If you want to ignore migrations (optional)
+# Uncomment if you don't want migrations in git
+# */migrations/
+
+# IDEs & Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environments
+.env
+*.env
+
+# Coverage & testing
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+.pytest_cache/
+
+# Compiled code
+*.so
+*.dll
+*.dylib

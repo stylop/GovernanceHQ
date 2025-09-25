@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+<main class="main">
+<br><br>
+    <!-- Page Title -->
+    <div class="page-title" data-aos="fade">
+      <div class="container">
+        <nav class="breadcrumbs">
+          <ol>
+            <li><a href="index.html">Home</a></li>
+            <li class="current">Blog Details</li>
+          </ol>
+        </nav>
+        <h1>Blog Details</h1>
+      </div>
+    </div><!-- End Page Title -->
+
+    <div class="container">
+      <div class="row">
+
+        <div class="col-lg-8">
+
+          <!-- Blog Details Section -->
+<section id="blog-details" class="blog-details section">
+  <div class="container" data-aos="fade-up">
+
+    <article class="article">
+
+      <!-- Featured Image -->
+      <div class="hero-img" data-aos="zoom-in">
+        {% if blog.image %}
+          <img src="{{ blog.image.url }}" alt="{{ blog.title }}" class="img-fluid" loading="lazy">
+        {% else %}
+          <img src="{% static 'assets/img/blog/default-blog.jpg' %}" alt="Default blog image" class="img-fluid" loading="lazy">
+        {% endif %}
+
+        <div class="meta-overlay">
+          <div class="meta-categories">
+            <a href="#" class="category">Blog</a>
+            <span class="divider">•</span>
+            <span class="reading-time">
+              <i class="bi bi-clock"></i>
+              {{ blog.content|wordcount|divisibleby:200|yesno:"%s min read,~" }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Blog Content -->
+      <div class="article-content" data-aos="fade-up" data-aos-delay="100">
+
+        <!-- Header -->
+        <div class="content-header">
+          <h1 class="title">{{ blog.title }}</h1>
+
+          <div class="author-info">
+            <div class="author-details">
+              <img src="{% static 'assets/img/person/default-author.jpg' %}" alt="{{ blog.author }}" class="author-img">
+              <div class="info">
+                <h4>{{ blog.author.get_full_name|default:blog.author.username }}</h4>
+                <span class="role">Contributor</span>
+              </div>
+            </div>
+            <div class="post-meta">
+              <span class="date"><i class="bi bi-calendar3"></i> {{ blog.created_at|date:"M d, Y" }}</span>
+              {% if blog.updated_at > blog.created_at %}
+                <span class="divider">•</span>
+                <span class="updated"><i class="bi bi-pencil"></i> Updated {{ blog.updated_at|date:"M d, Y" }}</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="content">
+          {{ blog.content|safe }}
+        </div>
+
+        <!-- Meta Bottom -->
+        <div class="meta-bottom">
+          <div class="tags-section">
+            <h4>Related Topics</h4>
+            <div class="tags">
+              <a href="#" class="tag">General</a>
+              <a href="#" class="tag">Insights</a>
+              <a href="#" class="tag">Updates</a>
+            </div>
+          </div>
+
+          <div class="share-section">
+            <h4>Share Article</h4>
+            <div class="social-links">
+              <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}" target="_blank"><i class="bi bi-twitter-x"></i></a>
+              <a href="https://facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank"><i class="bi bi-facebook"></i></a>
+              <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}" target="_blank"><i class="bi bi-linkedin"></i></a>
+              <a href="#" class="copy-link" onclick="navigator.clipboard.writeText('{{ request.build_absolute_uri }}'); alert('Link copied!');"><i class="bi bi-link-45deg"></i></a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </article>
+
+  </div>
+</section><!-- /Blog Details Section -->
+
+
+        </div>
+
+        <div class="col-lg-4 sidebar">
+
+          <div class="widgets-container" data-aos="fade-up" data-aos-delay="200">
+
+            <!-- Search Widget -->
+            <div class="search-widget widget-item">
+
+              <h3 class="widget-title">Search</h3>
+              <form action="">
+                <input type="text">
+                <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+              </form>
+
+            </div><!--/Search Widget -->
+
+                        <!-- Recent Posts Widget -->
+<div class="recent-posts-widget widget-item">
+
+  <h3 class="widget-title">Recent Posts</h3>
+
+  {% for recent in recent_posts %}
+    <div class="post-item">
+      {% if recent.image %}
+        <img src="{{ recent.image.url }}" alt="{{ recent.title }}" class="flex-shrink-0">
+      {% else %}
+        <img src="{% static 'core/img/default-thumb.jpg' %}" alt="No image" class="flex-shrink-0">
+      {% endif %}
+      <div>
+        <h4>
+          <a href="{% url 'blog_detail'  recent.slug %}">{{ recent.title }}</a>
+        </h4>
+        <time datetime="{{ recent.created_at|date:'Y-m-d' }}">
+          {{ recent.created_at|date:"M d, Y" }}
+        </time>
+      </div>
+    </div><!-- End recent post item-->
+  {% empty %}
+    <p>No recent posts yet.</p>
+  {% endfor %}
+
+</div><!--/Recent Posts Widget -->
+
+
+<!-- Categories Widget -->
+<div class="categories-widget widget-item">
+
+  <h3 class="widget-title">Categories</h3>
+  <ul class="mt-3">
+    {% for category in categories %}
+      <li>
+        <a href="{% url 'category_posts' category.slug %}">
+          {{ category.name }}
+          <span>({{ category.blogs.count }})</span>
+        </a>
+      </li>
+    {% empty %}
+      <li>No categories yet.</li>
+    {% endfor %}
+  </ul>
+
+</div><!--/Categories Widget -->
+
+
+
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+{% endblock content %}

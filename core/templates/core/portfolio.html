@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<main class="main">
+<br><br>
+  <!-- Page Title -->
+  <div class="page-title" data-aos="fade">
+    <div class="container">
+      <nav class="breadcrumbs">
+        <ol>
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li class="current">Portfolio</li>
+        </ol>
+      </nav>
+      <h1>Our Portfolio</h1>
+    </div>
+  </div><!-- End Page Title -->
+
+  <!-- Portfolio List Section -->
+  <section id="portfolio" class="portfolio section">
+    <div class="container" data-aos="fade-up">
+
+      <div class="row gy-4 portfolio-container">
+        {% for item in portfolios %}
+          <div class="col-xl-4 col-md-6 portfolio-item">
+            <div class="portfolio-wrap">
+
+              <a href="{% url 'portfolio_detail' item.slug %}">
+                {% if item.images.first %}
+                  <img src="{{ item.images.first.image.url }}" class="img-fluid" alt="{{ item.images.first.alt_text|default:item.title }}">
+                {% else %}
+                  <img src="{% static 'assets/img/default-portfolio.jpg' %}" class="img-fluid" alt="{{ item.title }}">
+                {% endif %}
+              </a>
+
+              <div class="portfolio-info">
+                <h4>
+                  <a href="{% url 'portfolio_detail' item.slug %}">{{ item.title }}</a>
+                </h4>
+                {% if item.category %}
+                  <p>{{ item.category.name }}</p>
+                {% endif %}
+                <div class="portfolio-links">
+                  <a href="{% url 'portfolio_detail' item.slug %}" title="More Details">
+                    <i class="bi bi-link-45deg"></i>
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        {% empty %}
+          <p class="text-center">No portfolio projects yet.</p>
+        {% endfor %}
+      </div>
+
+    </div>
+  </section><!-- /Portfolio List Section -->
+
+</main>
+{% endblock %}
+
+
+
+
+

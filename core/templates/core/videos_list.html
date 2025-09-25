@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section id="videos" class="work-process section">
+
+  <div class="page-title" data-aos="fade">
+    <div class="container">
+      <nav class="breadcrumbs">
+        <ol>
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li class="current">Videos</li>
+        </ol>
+      </nav>
+      <h1>Videos</h1>
+    </div>
+  </div>
+<br><br>
+  <div class="container" data-aos="fade-up" data-aos-delay="100">
+    <div class="row">
+
+      <!-- Sidebar: Categories -->
+      <div class="col-lg-3 order-lg-1">
+        <div class="categories-widget widget-item">
+          <h3 class="widget-title">Categories</h3>
+          <ul class="mt-3">
+            {% for category in categories %}
+              <li>
+                <a href="{% url 'video_category' category.slug %}">
+                  {{ category.name }}
+                  <span>({{ category.videos.count }})</span>
+                </a>
+              </li>
+            {% empty %}
+              <li>No categories yet.</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <!-- Main Content: Videos -->
+      <div class="col-lg-9">
+        <div class="row gy-5">
+          {% for video in videos %}
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:200 }}">
+              <div class="steps-item">
+                <div class="steps-image position-relative">
+                  {% if video.thumbnail %}
+                    <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}" class="img-fluid" loading="lazy">
+                  {% else %}
+                    <img src="{% static 'assets/img/default-thumbnail.jpg' %}" alt="{{ video.title }}" class="img-fluid">
+                  {% endif %}
+                  <a href="{{ video.video_url }}" class="glightbox play-btn" data-gallery="video-gallery">
+                    <i class="bi bi-play-circle-fill" style="font-size:3rem; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:white;"></i>
+                  </a>
+                </div>
+                <div class="steps-content">
+                  <h3>{{ video.title }}</h3>
+                  <p>{{ video.description|truncatewords:20 }}</p>
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <p class="text-center">No videos available.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+

@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Events - GovernanceHQ {% endblock %}
+{% block content %}
+<style>
+/* Ashar-style .read-more button */
+a.read-more.ashar,
+a.read-more.ashar:link,
+a.read-more.ashar:visited {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.56rem 1rem;
+  border: 2px solid #0b5ed7;       /* Ashar blue border */
+  border-radius: 10px;
+  background: #ffffff;             /* white by default */
+  color: #0b5ed7;                  /* blue text by default */
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  text-transform: none !important;
+  transition: background .18s ease, color .18s ease,
+              transform .12s ease, box-shadow .12s ease,
+              border-color .12s ease;
+  cursor: pointer;
+}
+
+a.read-more.ashar .bi {
+  transition: transform .18s ease, opacity .18s ease;
+  font-size: 1rem;
+  line-height: 1;
+  will-change: transform;
+  color: inherit;
+}
+
+/* Hover / focus */
+a.read-more.ashar:hover,
+a.read-more.ashar:focus {
+  background: #0b5ed7 !important;
+  color: #ffffff !important;
+  border-color: #0b5ed7 !important;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(11,94,215,0.16);
+}
+
+/* Active press */
+a.read-more.ashar:active {
+  transform: translateY(-1px);
+}
+
+/* Focus ring */
+a.read-more.ashar:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 6px rgba(11,94,215,0.12);
+}
+
+/* Icon move on hover */
+a.read-more.ashar:hover .bi {
+  transform: translateX(5px);
+}
+</style>
+
+<br><br><br>
+<div class="page-title" data-aos="fade">
+    <div class="container">
+      <nav class="breadcrumbs">
+        <ol>
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li class="current">Events</li>
+        </ol>
+      </nav>
+      <h1>Events</h1>
+    </div>
+  </div>
+
+<div class="container" data-aos="fade-up" data-aos-delay="100">
+  <div class="row gy-5">
+    {% for event in events %}
+    <div class="col-lg-4 col-md-6">
+      <div class="event-card">
+        {% if event.image %}
+          <img src="{{ event.image.url }}" alt="{{ event.title }}" class="img-fluid mb-3">
+        {% else %}
+          <img src="{% static 'assets/img/default-event.jpg' %}" alt="{{ event.title }}" class="img-fluid mb-3">
+        {% endif %}
+
+        <h3>{{ event.title }}</h3>
+        <p class="text-muted">
+          {{ event.date|date:"F j, Y" }}
+          {% if event.venue %} • {{ event.venue }}{% endif %}
+        </p>
+        <p>{{ event.description|truncatewords:20 }}</p>
+
+        <div class="mt-3" data-aos="fade-up" data-aos-delay="200">
+  <a href="{{ event.gallery_link }}" target="_blank" rel="noopener noreferrer" class="read-more ashar">
+    <span>View Photos</span> <i class="bi bi-arrow-right"></i>
+  </a>
+</div>
+
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-center">No past events yet.</p>
+    {% endfor %}
+  </div>
+</div>
+<br>
+
+
+{% endblock content %}

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<main class="main">
+<br><br>
+  <!-- Page Title -->
+  <div class="page-title" data-aos="fade">
+    <div class="container">
+      <nav class="breadcrumbs">
+        <ol>
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li><a href="{% url 'portfolio' %}">Portfolio</a></li>
+          <li class="current">{{ portfolio.title }}</li>
+        </ol>
+      </nav>
+      <h1>{{ portfolio.title }}</h1>
+    </div>
+  </div><!-- End Page Title -->
+
+  <!-- Portfolio Details Section -->
+  <section id="portfolio-details" class="portfolio-details section">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+      <div class="row gy-4">
+
+        <!-- Left: Swiper Slider -->
+        <div class="col-lg-8">
+          <div class="portfolio-details-slider swiper init-swiper">
+
+            <script type="application/json" class="swiper-config">
+              {
+                "loop": true,
+                "speed": 600,
+                "autoplay": {
+                  "delay": 5000
+                },
+                "slidesPerView": "auto",
+                "pagination": {
+                  "el": ".swiper-pagination",
+                  "type": "bullets",
+                  "clickable": true
+                }
+              }
+            </script>
+
+            <div class="swiper-wrapper align-items-center">
+              {% if portfolio.images.all %}
+                {% for img in portfolio.images.all %}
+                  <div class="swiper-slide">
+                    <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:portfolio.title }}">
+                  </div>
+                {% endfor %}
+              {% else %}
+                <div class="swiper-slide">
+                  <img src="{% static 'assets/img/default-portfolio.jpg' %}" alt="Default">
+                </div>
+              {% endif %}
+            </div>
+            <div class="swiper-pagination"></div>
+          </div>
+        </div>
+
+        <!-- Right: Info -->
+        <div class="col-lg-4">
+          <div class="portfolio-info">
+            <h3>Project Information</h3>
+            <ul>
+              {% if portfolio.category %}
+                <li><strong>Category</strong>: {{ portfolio.category.name }}</li>
+              {% endif %}
+              {% if portfolio.client %}
+                <li><strong>Client</strong>: {{ portfolio.client }}</li>
+              {% endif %}
+              <li><strong>Project date</strong>: {{ portfolio.project_date|date:"F d, Y" }}</li>
+              {% if portfolio.url %}
+                <li><strong>Project URL</strong>: <a href="{{ portfolio.url }}" target="_blank">{{ portfolio.url }}</a></li>
+              {% endif %}
+            </ul>
+          </div>
+
+          <div class="portfolio-description mt-4">
+            <h2>{{ portfolio.title }}</h2>
+            <p>{{ portfolio.description|linebreaks }}</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section><!-- /Portfolio Details Section -->
+
+</main>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<main class="main">
+<br><br>
+  <!-- Page Title -->
+  <div class="page-title" data-aos="fade">
+    <div class="container">
+      <nav class="breadcrumbs">
+        <ol>
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li><a href="{% url 'services' %}">Services</a></li>
+          <li class="current">{{ service.title }}</li>
+        </ol>
+      </nav>
+      <h1>{{ service.title }}</h1>
+    </div>
+  </div>
+  <!-- End Page Title -->
+
+  <!-- Service Details Section -->
+  <section id="service-details" class="service-details section">
+    <div class="container">
+
+      <div class="row gy-4">
+
+        <!-- Sidebar with list of services -->
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="services-list">
+            {% for s in services %}
+              <a href="{% url 'service_detail' s.slug %}" class="{% if s.id == service.id %}active{% endif %}">
+                {{ s.title }}
+              </a>
+            {% endfor %}
+          </div>
+
+          <h4>{{ service.title }}</h4>
+          <p>{{ service.description }}</p>
+        </div>
+
+        <!-- Main service detail content -->
+        <div class="col-lg-8" data-aos="fade-up" data-aos-delay="200">
+          {% if service.image %}
+            <img src="{{ service.image.url }}" alt="{{ service.title }}" class="img-fluid services-img">
+          {% else %}
+            <img src="{% static 'assets/img/default-service.jpg' %}" alt="{{ service.title }}" class="img-fluid services-img">
+          {% endif %}
+
+          <h3>{{ service.title }}</h3>
+          <p>{{ service.description }}</p>
+
+          {% if service.features %}
+            <ul>
+              {% for feature in service.features.splitlines %}
+                <li><i class="bi bi-check-circle"></i> <span>{{ feature }}</span></li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+          {% if service.extra_details %}
+            <p>{{ service.extra_details|linebreaks }}</p>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </section>
+  <!-- /Service Details Section -->
+
+</main>
+{% endblock %}

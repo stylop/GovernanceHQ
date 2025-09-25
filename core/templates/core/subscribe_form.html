@@ -1,0 +1,49 @@
+{% load static %}
+
+
+<form id="homepageNewsletterForm" action="{% url 'subscribe_newsletter' %}" method="post">
+  {% csrf_token %}
+  <div class="input-group mb-3">
+    {{ newsletter_form.email }}
+    <button class="btn btn-primary" type="submit" id="button-subscribe">Subscribe</button>
+  </div>
+  <div id="homepage-newsletter-messages" class="mt-2"></div>
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const homepageForm = document.getElementById("homepageNewsletterForm");
+  const homepageMessages = document.getElementById("homepage-newsletter-messages");
+
+  if (homepageForm) {
+    homepageForm.addEventListener("submit", function(e) {
+      e.preventDefault(); // 👈 Stop normal reload
+
+      const formData = new FormData(homepageForm);
+
+      fetch(homepageForm.action, {
+        method: "POST",
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+          "X-CSRFToken": homepageForm.querySelector("[name=csrfmiddlewaretoken]").value,
+        },
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        homepageMessages.innerHTML = "";
+        if (data.status === "success") {
+          homepageMessages.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+          homepageForm.reset();
+        } else {
+          homepageMessages.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+        }
+      })
+      .catch(() => {
+        homepageMessages.innerHTML = `<div class="alert alert-danger">Something went wrong. Try again later.</div>`;
+      });
+    });
+  }
+});
+</script>
+

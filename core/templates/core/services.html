@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Services - GovernanceHQ {% endblock %}
+
+{% block content %}
+<section id="work-process" class="work-process section">
+
+  <!-- Page Title -->
+  <div class="page-title" data-aos="fade">
+    <div class="container">
+      <nav class="breadcrumbs">
+        <ol>
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li class="current">Services</li>
+        </ol>
+      </nav>
+      <h1>Services</h1>
+    </div>
+  </div>
+  <br><br><br>
+
+  <div class="container" data-aos="fade-up" data-aos-delay="100">
+    <div class="row gy-5">
+
+      {% for service in services %}
+      <div class="col-lg-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:1 }}00">
+        <div class="steps-item">
+          <div class="steps-image">
+            {% if service.image %}
+              <img src="{{ service.image.url }}" alt="{{ service.title }}" class="img-fluid" loading="lazy">
+            {% else %}
+              <img src="{% static 'assets/img/default-service.jpg' %}" alt="{{ service.title }}" class="img-fluid" loading="lazy">
+            {% endif %}
+          </div>
+          <div class="steps-content">
+            <div class="steps-number">
+              {{ service.number|stringformat:"02d" }}
+            </div>
+            <h3>{{ service.title }}</h3>
+            <p>{{ service.description }}</p>
+
+            <!-- Learn More Button -->
+            {% if service.slug %}
+              <a href="{% url 'service_detail' service.slug %}" class="btn btn-primary mt-3">
+                Learn More
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
+  </div>
+</section>
+{% endblock %}
+
