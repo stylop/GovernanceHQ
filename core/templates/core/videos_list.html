@@ -1,107 +1,159 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %} Videos - GovernanceHQ {% endblock %}
+
 {% block content %}
 <section id="videos" class="work-process section">
-<br>
-  <div class="page-title" data-aos="fade">
+  <div class="page-title py-4" data-aos="fade">
     <div class="container">
-      <nav class="breadcrumbs">
+      <nav class="breadcrumbs mb-2">
         <ol>
           <li><a href="{% url 'home' %}">Home</a></li>
           <li class="current">Videos</li>
         </ol>
       </nav>
-      <h1>Videos</h1>
+      <h1 class="fw-bold">Videos</h1>
     </div>
   </div>
-<br><br>
-  <div class="container" data-aos="fade-up" data-aos-delay="100">
-    <div class="row">
 
-      <!-- Sidebar: Categories -->
-      <div class="col-lg-3 order-lg-1">
-        <div class="categories-widget widget-item">
-          <h3 class="widget-title">Categories</h3>
-          <ul class="mt-3">
-            {% for category in categories %}
-              <li>
-                <a href="{% url 'video_category' category.slug %}">
-                  {{ category.name }}
-                  <span>({{ category.videos.count }})</span>
-                </a>
-              </li>
-            {% empty %}
-              <li>No categories yet.</li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
+  <div class="container py-5" data-aos="fade-up" data-aos-delay="100">
+    <div class="row g-4">
 
-      <!-- Main Content: Videos -->
-      <div class="col-lg-9">
-        <div class="row gy-5">
+      <!-- Main Content -->
+      <div class="col-lg-8">
+        <div class="row g-4">
           {% for video in page_obj %}
-            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:200 }}">
-              <div class="steps-item">
+            <div class="col-md-6">
+              <div class="steps-item h-100 shadow-sm rounded p-2">
                 <div class="steps-image position-relative">
                   {% if video.thumbnail %}
-                    <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}" class="img-fluid" loading="lazy">
+                    <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}" class="img-fluid rounded" loading="lazy">
                   {% else %}
-                    <img src="{% static 'assets/img/default-thumbnail.jpg' %}" alt="{{ video.title }}" class="img-fluid">
+                    <img src="{% static 'assets/img/default-thumbnail.jpg' %}" alt="{{ video.title }}" class="img-fluid rounded">
                   {% endif %}
                   <a href="{{ video.video_url }}" class="glightbox play-btn" data-gallery="video-gallery">
-                    <i class="bi bi-play-circle-fill" style="font-size:3rem; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:white;"></i>
+                    <i class="bi bi-play-circle-fill position-absolute top-50 start-50 translate-middle text-white" style="font-size:3rem;"></i>
                   </a>
                 </div>
-                <div class="steps-content">
-                  <h3>{{ video.title }}</h3>
-                  <p>{{ video.description|truncatewords:20 }}</p>
+                <div class="steps-content mt-3">
+                  <h5 class="fw-semibold">{{ video.title }}</h5>
+                  <p class="text-muted small">{{ video.description|truncatewords:20 }}</p>
                 </div>
               </div>
             </div>
           {% empty %}
-            <p class="text-center">No videos available.</p>
+            <div class="col-12 text-center">
+              <p>No videos available.</p>
+            </div>
           {% endfor %}
         </div>
+        <br>
+        <!-- Back Button (only if searching) -->
+{% if query %}
+  <div class="mb-3">
+    <a href="{% url 'videos_list' %}" class="btn btn-outline-secondary btn-sm">
+      ← Back to All Videos
+    </a>
+  </div>
+{% endif %}
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<div class="pagination-wrapper mt-5">
+  <nav aria-label="Video pagination">
+    <ul class="pagination justify-content-center">
+
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}page={{ page_obj.previous_page_number }}">
+            <i class="bi bi-chevron-left"></i>
+          </a>
+        </li>
+      {% endif %}
+
+      {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+          <li class="page-item active">
+            <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}page={{ num }}">{{ num }}</a>
+          </li>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <li class="page-item">
+            <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}page={{ num }}">{{ num }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}page={{ page_obj.next_page_number }}">
+            <i class="bi bi-chevron-right"></i>
+          </a>
+        </li>
+      {% endif %}
+
+    </ul>
+  </nav>
+</div>
+{% endif %}
 
       </div>
-        <!-- Pagination -->
-        <section id="pagination-2" class="pagination-2 section">
-          <div class="container">
-            <div class="d-flex justify-content-center">
-              <ul>
-                {% if page_obj.has_previous %}
-                  <li>
-                    <a href="?page={{ page_obj.previous_page_number }}">
-                      <i class="bi bi-chevron-left"></i>
-                    </a>
-                  </li>
-                {% endif %}
+      <!-- /Main Content -->
 
-                {% for num in page_obj.paginator.page_range %}
-                  {% if page_obj.number == num %}
-                    <li><a href="?page={{ num }}" class="active">{{ num }}</a></li>
-                  {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                    <li><a href="?page={{ num }}">{{ num }}</a></li>
-                  {% endif %}
-                {% endfor %}
+      <!-- Sidebar -->
+      <div class="col-lg-4 sidebar">
+        <!-- Search Widget -->
+        <div class="search-widget widget-item">
+          <h3 class="widget-title">Search</h3>
+          <form method="get" action="">
+              <input type="text" name="q" value="{{ query }}"  placeholder="Search...">
+              <button type="submit" title="Search"><i class="bi bi-search"></i></button>
 
-                {% if page_obj.has_next %}
-                  <li>
-                    <a href="?page={{ page_obj.next_page_number }}">
-                      <i class="bi bi-chevron-right"></i>
-                    </a>
-                  </li>
-                {% endif %}
-              </ul>
-            </div>
-          </div>
-        </section>
-        <!-- /Pagination -->
+          </form>
+        </div>
+
+        <!-- Categories Widget -->
+<div class="categories-widget widget-item p-3 shadow-sm rounded">
+  <h3 class="widget-title">Categories</h3>
+  <ul class="list-unstyled mt-3">
+
+    <!-- All Videos Link -->
+    <li class="mb-2">
+      <a href="{% url 'videos_list' %}"
+         class="d-flex justify-content-between align-items-center {% if not category %}active fw-bold text-primary{% endif %}">
+        <span>All Videos</span>
+        <span class="badge {% if not category %}bg-primary{% else %}bg-secondary{% endif %}">
+          {{ total_videos }}
+        </span>
+      </a>
+    </li>
+
+    {% for cat in categories %}
+      <li class="mb-2">
+        <a href="{% url 'video_category' cat.slug %}"
+           class="d-flex justify-content-between align-items-center {% if category and category.id == cat.id %}active fw-bold text-primary{% endif %}">
+          <span>{{ cat.name }}</span>
+          <span class="badge {% if category and category.id == cat.id %}bg-primary{% else %}bg-secondary{% endif %}">
+            {{ cat.videos.count }}
+          </span>
+        </a>
+      </li>
+    {% empty %}
+      <li>No categories yet.</li>
+    {% endfor %}
+  </ul>
+</div>
+
+      </div>
+      <!-- /Sidebar -->
+
     </div>
   </div>
 </section>
 {% endblock %}
+
+
+
+
 
 

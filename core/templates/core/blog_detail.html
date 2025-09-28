@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
+{% block title %}{{ blog.title }} - GovernanceHQ{% endblock %}
 {% block content %}
 <main class="main">
-<br><br>
+<br><br><br>
     <!-- Page Title -->
     <div class="page-title" data-aos="fade">
       <div class="container">
@@ -58,7 +58,7 @@
 
           <div class="author-info">
             <div class="author-details">
-              <img src="{% static 'assets/img/person/default-author.jpg' %}" alt="{{ blog.author }}" class="author-img">
+
               <div class="info">
                 <h4>{{ blog.author.get_full_name|default:blog.author.username }}</h4>
                 <span class="role">Contributor</span>
@@ -79,27 +79,6 @@
           {{ blog.content|safe }}
         </div>
 
-        <!-- Meta Bottom -->
-        <div class="meta-bottom">
-          <div class="tags-section">
-            <h4>Related Topics</h4>
-            <div class="tags">
-              <a href="#" class="tag">General</a>
-              <a href="#" class="tag">Insights</a>
-              <a href="#" class="tag">Updates</a>
-            </div>
-          </div>
-
-          <div class="share-section">
-            <h4>Share Article</h4>
-            <div class="social-links">
-              <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}" target="_blank"><i class="bi bi-twitter-x"></i></a>
-              <a href="https://facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank"><i class="bi bi-facebook"></i></a>
-              <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}" target="_blank"><i class="bi bi-linkedin"></i></a>
-              <a href="#" class="copy-link" onclick="navigator.clipboard.writeText('{{ request.build_absolute_uri }}'); alert('Link copied!');"><i class="bi bi-link-45deg"></i></a>
-            </div>
-          </div>
-        </div>
 
       </div>
 
@@ -161,10 +140,10 @@
   <ul class="mt-3">
     {% for category in categories %}
       <li>
-        <a href="{% url 'category_posts' category.slug %}">
-          {{ category.name }}
-          <span>({{ category.blogs.count }})</span>
-        </a>
+        <a href="{% url 'blog_by_category' category.slug %}">
+  {{ category.name }}
+  <span>({{ category.blogs.count }})</span>
+</a>
       </li>
     {% empty %}
       <li>No categories yet.</li>

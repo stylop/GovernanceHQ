@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      body { font-family: Arial, sans-serif; line-height: 1.6; }
+      .container { max-width: 600px; margin: auto; padding: 20px; }
+      .header { background: #800000; color: #fff; padding: 15px; text-align: center; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h2>New Newsletter Subscription</h2>
+      </div>
+      <p>A new user has subscribed to the newsletter:</p>
+
+      <p><strong>Email:</strong> {{ subscriber.email }}</p>
+
+      <p>Check the admin panel for details.</p>
+    </div>
+  </body>
+</html>

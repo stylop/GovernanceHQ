@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
+from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse
@@ -100,16 +101,14 @@ def resources(request):
 def blog_list(request, slug=None):
     query = request.GET.get("q", "")
     posts = Blog.objects.all().order_by('-created_at')
-    categories = Category.objects.all()
-    paginator = Paginator(posts, 6)  # 6 posts per page
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
-
     category_obj = None
-    if slug:  # Category filter
+
+    # Category filter
+    if slug:
         category_obj = get_object_or_404(Category, slug=slug)
         posts = posts.filter(category=category_obj)
 
+    # Search filter
     if query:
         posts = posts.filter(
             Q(title__icontains=query) |
@@ -117,7 +116,12 @@ def blog_list(request, slug=None):
             Q(category__name__icontains=query)
         )
 
-    # Keep your recent posts + categories as before
+    # Pagination AFTER filtering
+    paginator = Paginator(posts, 6)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    # Sidebar data
     recent_posts = Blog.objects.all().order_by('-created_at')[:5]
     categories = Category.objects.all()
 
@@ -128,10 +132,12 @@ def blog_list(request, slug=None):
             "page_obj": page_obj,
             "recent_posts": recent_posts,
             "categories": categories,
-            "query": query,  # send back search term
+            "query": query,
             "selected_category": category_obj,
         },
     )
+
+
 def blog_detail(request, slug):
     blog = get_object_or_404(Blog, slug=slug)
     recent_posts = Blog.objects.all().order_by('-created_at')[:5]  # last 5
@@ -205,56 +211,94 @@ def photo_category(request, slug):
         "active_category": category,
     })
 
-
 def videos_list(request):
     categories = VideoCategory.objects.all()
-    videos = Video.objects.all().order_by("-id")  # optional: newest first
+    videos = Video.objects.all().order_by("-id")
 
-    paginator = Paginator(videos, 6)  # show 6 per page
+    q = request.GET.get("q", "")
+    if q:
+        videos = videos.filter(
+            Q(title__icontains=q) | Q(description__icontains=q)
+        )
+
+    paginator = Paginator(videos, 6)  # 6 per page
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
     return render(request, "core/videos_list.html", {
         "categories": categories,
-        "videos": page_obj,   # ✅ videos loop
-        "page_obj": page_obj, # ✅ pagination controls
+        "page_obj": page_obj,
+        "query": q,   # 🔑 Pass query separately
+        "total_videos": Video.objects.count(),  # ✅ all videos count
     })
 
 def video_category(request, slug):
     category = get_object_or_404(VideoCategory, slug=slug)
-    videos = category.videos.all()
-    categories = VideoCategory.objects.all()
-    return render(request, "core/videos_list.html", {"categories": categories, "videos": videos, "current_category": category})
+    videos = category.videos.all().order_by("-id")  # uses related_name
+
+    paginator = Paginator(videos, 6)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "core/videos_list.html", {
+        "categories": VideoCategory.objects.all(),
+        "page_obj": page_obj,
+        "category": category,
+    })
 
 
 def subscribe_newsletter(request):
     if request.method == "POST":
         form = NewsletterForm(request.POST)
         if form.is_valid():
-            form.save()
+            subscriber = form.save()
 
-            # AJAX request → return JSON
-            if request.headers.get("x-requested-with", "").lower() == "xmlhttprequest":
+            # 1. Welcome email to subscriber
+            subject_user = "Welcome to GovernanceHQ Newsletter 🎉"
+            text_content_user = "Thank you for subscribing to GovernanceHQ."
+            html_content_user = render_to_string("emails/subscription_welcome.html", {"subscriber": subscriber})
+
+            msg_user = EmailMultiAlternatives(
+                subject_user,
+                text_content_user,
+                settings.DEFAULT_FROM_EMAIL,
+                [subscriber.email],
+            )
+            msg_user.attach_alternative(html_content_user, "text/html")
+            msg_user.send()
+
+            # 2. Notify admin(s)
+            subject_admin = "📩 New Newsletter Subscriber"
+            text_content_admin = f"New subscriber: {subscriber.email}"
+            html_content_admin = render_to_string("emails/new_subscriber_notify.html", {"subscriber": subscriber})
+
+            msg_admin = EmailMultiAlternatives(
+                subject_admin,
+                text_content_admin,
+                settings.DEFAULT_FROM_EMAIL,
+                settings.ADMINS_EMAILS,  # make sure defined in settings.py
+            )
+            msg_admin.attach_alternative(html_content_admin, "text/html")
+            msg_admin.send()
+
+            # 3. AJAX response
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return JsonResponse({
                     "status": "success",
-                    "message": "You have successfully subscribed!"
+                    "message": "You have successfully subscribed! Check your email for confirmation."
                 })
 
-            # Normal form → fallback redirect
             return redirect(request.META.get("HTTP_REFERER", "/"))
 
         else:
-            # AJAX request → return JSON
-            if request.headers.get("x-requested-with", "").lower() == "xmlhttprequest":
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return JsonResponse({
                     "status": "error",
                     "message": "This email is already subscribed or invalid."
                 })
 
-            # Normal form → fallback redirect
             return redirect(request.META.get("HTTP_REFERER", "/"))
 
-    # GET or other → just redirect home
     return redirect("/")
 
 

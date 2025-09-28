@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   if (homepageForm) {
     homepageForm.addEventListener("submit", function(e) {
-      e.preventDefault(); // 👈 Stop normal reload
+      e.preventDefault();
 
       const formData = new FormData(homepageForm);
 
@@ -32,18 +32,29 @@ document.addEventListener("DOMContentLoaded", function() {
       .then(response => response.json())
       .then(data => {
         homepageMessages.innerHTML = "";
+
+        let alertClass = data.status === "success" ? "alert-success" : "alert-danger";
+        homepageMessages.innerHTML = `<div class="alert ${alertClass}">${data.message}</div>`;
+
         if (data.status === "success") {
-          homepageMessages.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
           homepageForm.reset();
-        } else {
-          homepageMessages.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
         }
+
+        // ⏳ Auto-hide after 4 seconds
+        setTimeout(() => {
+          homepageMessages.innerHTML = "";
+        }, 4000);
       })
       .catch(() => {
         homepageMessages.innerHTML = `<div class="alert alert-danger">Something went wrong. Try again later.</div>`;
+
+        setTimeout(() => {
+          homepageMessages.innerHTML = "";
+        }, 4000);
       });
     });
   }
 });
+
 </script>
 

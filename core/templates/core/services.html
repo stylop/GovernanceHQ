@@ -4,8 +4,65 @@
 {% block title %} Services - GovernanceHQ {% endblock %}
 
 {% block content %}
-<section id="work-process" class="work-process section">
+<style>
+/* Ashar-style .read-more button */
+a.read-more.ashar,
+a.read-more.ashar:link,
+a.read-more.ashar:visited {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.56rem 1rem;
+  border: 2px solid #0b5ed7;       /* Ashar blue border */
+  border-radius: 10px;
+  background: #ffffff;             /* white by default */
+  color: #0b5ed7;                  /* blue text by default */
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  text-transform: none !important;
+  transition: background .18s ease, color .18s ease,
+              transform .12s ease, box-shadow .12s ease,
+              border-color .12s ease;
+  cursor: pointer;
+}
 
+a.read-more.ashar .bi {
+  transition: transform .18s ease, opacity .18s ease;
+  font-size: 1rem;
+  line-height: 1;
+  will-change: transform;
+  color: inherit;
+}
+
+/* Hover / focus */
+a.read-more.ashar:hover,
+a.read-more.ashar:focus {
+  background: #0b5ed7 !important;
+  color: #ffffff !important;
+  border-color: #0b5ed7 !important;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(11,94,215,0.16);
+}
+
+/* Active press */
+a.read-more.ashar:active {
+  transform: translateY(-1px);
+}
+
+/* Focus ring */
+a.read-more.ashar:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 6px rgba(11,94,215,0.12);
+}
+
+/* Icon move on hover */
+a.read-more.ashar:hover .bi {
+  transform: translateX(5px);
+}
+</style>
+<section id="work-process" class="work-process section">
+<br>
   <!-- Page Title -->
   <div class="page-title" data-aos="fade">
     <div class="container">
@@ -42,10 +99,11 @@
 
             <!-- Learn More Button -->
             {% if service.slug %}
-              <a href="{% url 'service_detail' service.slug %}" class="btn btn-primary mt-3">
-                Learn More
-              </a>
+            <a href="{% url 'service_detail' service.slug %}"  class="read-more ashar">
+              <span>Learn More</span> <i class="bi bi-arrow-right"></i>
+            </a>
             {% endif %}
+
           </div>
         </div>
       </div>
