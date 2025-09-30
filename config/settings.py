@@ -29,8 +29,8 @@ if not SECRET_KEY:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG =  os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ["*",".railway.app"]
-CSRF_TRUSTED_ORIGINS = []
+ALLOWED_HOSTS = ['governancehq-production.up.railway.app','https://governancehq-production.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://governancehq-production.up.railway.app']
 
 # Application definition
 
