@@ -1,0 +1,2 @@
+[build]
+apt_packages = ["libjpeg-dev", "zlib1g-dev"]
