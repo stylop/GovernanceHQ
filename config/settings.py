@@ -29,7 +29,7 @@ if not SECRET_KEY:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG =  os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["*",".railway.app"]
 CSRF_TRUSTED_ORIGINS = []
 
 # Application definition
