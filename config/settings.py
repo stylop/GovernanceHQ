@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG =  os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = ["*"]
-
+CSRF_TRUSTED_ORIGINS = []
 
 # Application definition
 
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'core',
     'ckeditor',
     'ckeditor_uploader',
+    'whitenoise.runserver_nostatic',
 ]
 
 MIDDLEWARE = [
