@@ -31,7 +31,11 @@ DEBUG = True
 
 
 ALLOWED_HOSTS = ["governancehq-production.up.railway.app", "localhost", "127.0.0.1"]
-CSRF_TRUSTED_ORIGINS = ['https://governancehq-production.up.railway.app']
+CSRF_TRUSTED_ORIGINS = [
+    "https://governancehq-production.up.railway.app",
+    "http://governancehq-production.up.railway.app",
+]
+
 
 # Application definition
 
