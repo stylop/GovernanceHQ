@@ -27,9 +27,10 @@ if not SECRET_KEY:
     raise ValueError("SECRET_KEY environment variable is not set!")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG =  os.getenv("DEBUG", "False") == "True"
+DEBUG = True
 
-ALLOWED_HOSTS =ALLOWED_HOSTS = ["governancehq-production.up.railway.app", "localhost", "127.0.0.1"]
+
+ALLOWED_HOSTS = ["governancehq-production.up.railway.app", "localhost", "127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = ['https://governancehq-production.up.railway.app']
 
 # Application definition
